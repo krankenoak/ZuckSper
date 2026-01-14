@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands, tasks
 
+import vc
+
 import random
 import gifs
 async def random_event(msg, chance): 
@@ -49,26 +51,22 @@ async def on_message(msg):
 async def test(ctx):
     await random_event(ctx.message, 1.0)
 
-@bot.command()
-async def join(ctx):
-    if ctx.author.voice:
-        await ctx.author.voice.channel.connect()
-        play_audio_loop.start(ctx.voice_client)
-
-@bot.command()
-async def leave(ctx):
-    if ctx.voice_client:
-        await ctx.voice_client.disconnect()
-
-@tasks.loop(seconds=120)
-async def play_audio_loop(vc: discord.VoiceClient):
-    if not vc.is_connected():
-        play_audio_loop.stop()
-        return
-    if random.randint(1, 4) == 1:
-        if not vc.is_playing():
-            vc.play(discord.FFmpegPCMAudio("metal.mp3"))
+###############################################
 
 with open("token", "r") as file:
     token = file.read().strip()
-bot.run(token)
+
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+
+async def main():
+    async with bot:
+        await bot.load_extension("vc")
+        await bot.start(token)
+
+import asyncio
+asyncio.run(main())
