@@ -23,16 +23,31 @@ def get_audio_url(url):
     info = ytdl.extract_info(url, download=False)
     return info["url"]
 
-@tasks.loop(seconds=10)
+@tasks.loop(seconds=120)
 async def play_audio_loop(vc: discord.VoiceClient):
     if not vc.is_connected():
         play_audio_loop.stop()
         return
-    if random.randint(1, 4) == 1:
+    if random.random() < 0.02:
         if not vc.is_playing():
             vc.play(discord.FFmpegPCMAudio("metal.mp3"))
 
 async def setup(bot: commands.Bot):
+    @bot.event
+    async def on_voice_state_update(member, before, after):
+        if before.channel is None:
+            return
+    
+        voice_client = member.guild.voice_client
+        if not voice_client:
+            return
+    
+        if voice_client.channel != before.channel:
+            return
+    
+        if len(before.channel.members) == 1:
+            await voice_client.disconnect()
+
     @bot.command()
     async def join(ctx):
         if ctx.author.voice:

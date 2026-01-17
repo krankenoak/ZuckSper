@@ -5,21 +5,32 @@ import vc
 
 import random
 import gifs
-async def random_event(msg, chance): 
-    if random.random() < chance:
-        await msg.channel.send(random.choice(gifs.tenor_urls))
-
 
 intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
+bot_active = True
+zuckprosiny_id = 1462139529480638699
+
+async def random_event(msg, chance): 
+    if random.random() < chance:
+        await msg.channel.send(random.choice(gifs.tenor_urls))
+
+async def send_dm(user_id: int, text: str):
+    user = await bot.fetch_user(user_id)
+    await user.send(text)
+
+@tasks.loop(seconds=5)
+async def przepros():
+    if bot_active:
+        przepros.stop()
+        return
+    await bot.get_channel(zuckprosiny_id).send("przepraszam 🥺")
 
 @bot.event
 async def on_ready():
     print(f"DzZIASjgasdk {bot.user}")
-
-bot_active = True
 
 @bot.event
 async def on_message(msg):
@@ -27,10 +38,15 @@ async def on_message(msg):
     if msg.author.bot:
         return
 
+    if isinstance(msg.channel, discord.DMChannel):
+        print(  f"[MSG] {msg.author} ({msg.author.id}) "
+                f"in #{msg.channel} ({msg.guild}): {msg.content}" )
+
     if not bot_active:
-        if bot.user in msg.mentions and "do nogi" in msg.content.lower():
+        if msg.channel.id == zuckprosiny_id and "wybaczam" in msg.content.lower():
+            await msg.channel.send(file=discord.File("me.jpg"))
             bot_active = True
-            await msg.add_reaction(discord.utils.get(bot.emojis, name="deep_hard_butt_sex_elf"));
+            await msg.add_reaction(discord.utils.get(bot.emojis, name="deep_hard_butt_sux_elf"));
             await bot.change_presence(status=discord.Status.online)
         return
     
@@ -39,6 +55,7 @@ async def on_message(msg):
             bot_active = False
             await msg.add_reaction(discord.utils.get(bot.emojis, name="brain1"))
             await bot.change_presence(status=discord.Status.invisible)
+            przepros.start()
             return
         if "siat" in msg.content.lower():
             await msg.channel.send(file=discord.File("me.jpg"))
