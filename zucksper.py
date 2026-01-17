@@ -1,6 +1,10 @@
 import discord
 from discord.ext import commands, tasks
 
+import random
+from datetime import time
+import pytz
+
 import vc
 
 import random
@@ -8,6 +12,8 @@ import gifs
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
+intents.presences = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 bot_active = True
@@ -67,6 +73,29 @@ async def on_message(msg):
 @bot.command()
 async def test(ctx):
     await random_event(ctx.message, 1.0)
+
+@tasks.loop(time=time(hour=3, minute=0, tzinfo=pytz.timezone("Europe/Warsaw")))
+async def zucky_3am_reminder():
+    guild = bot.get_guild(GUILD_ID)
+    channel = guild.get_channel(CHANNEL_ID)
+
+    await guild.members.fetch()
+
+    online = []
+
+    for member in guild.members:
+        if member.bot:
+            continue
+
+        if member.status == discord.Status.online:
+            online.append(member)
+    for member in online:
+        if random.randint(0, 10) >= 4:
+            continue
+        await member.send(
+            "📷 Twoje zdjęcie:",
+            file=discord.File("scary_zuck.png")
+        )
 
 ###############################################
 
