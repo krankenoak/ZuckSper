@@ -48,7 +48,7 @@ async def przepros():
     if bot_active:
         przepros.stop()
         return
-    await bot.get_channel(zuckprosiny_id).send("przepraszam 🥺")
+    await bot.get_channel(zuckprosiny_id).send("przepraszam 🥺, znalazłeś backdoora... witam, jestem tutaj, w czym mogę pomóc?")
 
 @bot.event
 async def on_ready():
