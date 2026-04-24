@@ -17,7 +17,7 @@ FFMPEG_OPTIONS = {
     "options": "-vn",
 }
 
-ytdl = yt_dlp.YoutubeDL(YTDL_OPTIONS)
+ytdl = yt_dlp.YoutubeDL(YTDL_OPTIONS) #tutaj zmiana
 
 def get_audio_url(url):
     info = ytdl.extract_info(url, download=False)
