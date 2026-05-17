@@ -194,12 +194,9 @@ async def replace(ctx):
 
 # MAIN
 async def main():
-    with open(config.TOKEN_FILE, "r") as f:
-        token = f.read().strip()
-
     async with bot:
         await bot.load_extension("vc")
-        await bot.start(token)
+        await bot.start(config.TOKEN)
 
 
 if __name__ == "__main__":

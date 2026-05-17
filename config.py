@@ -1,11 +1,15 @@
+import os
+from dotenv import load_dotenv
 import logging
 import mood
 
 # CONFIG
-TOKEN_FILE = "token"
+load_dotenv()
 
-HAU_ID = 1
-ZUCKPROSINY_ID = 1
+TOKEN = os.getenv("TOKEN")
+
+HAU_ID = int(os.getenv("HAU_ID"))
+ZUCKPROSINY_ID = int(os.getenv("ZUCKPROSINY_ID"))
 
 # GLOBAL STATE
 STATE = {
