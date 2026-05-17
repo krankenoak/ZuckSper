@@ -85,6 +85,10 @@ async def on_message(msg):
     await events.process_random_events(ctx)
     await bot.process_commands(msg)
 
+    content = msg.content.lower()                                                 # 1
+    if "zuck" in content:                                                        # 2
+        await msg.channel.send(f"{msg.author.mention} co mnie obgadujesz??")    # 3
+
 # COMMANDS
 @bot.command()
 async def info(ctx):
