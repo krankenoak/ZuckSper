@@ -1,4 +1,7 @@
 import random
+import time
+
+import config
 
 class Mood:
     def __init__(self):
@@ -33,3 +36,17 @@ class Mood:
             return "😃"
         else:
             return "🤩"
+
+
+async def update_last_activity():
+    config.STATE["last_activity"] = time.time()
+
+SOLITUDE_PEAK = 7 * 24 * 60 * 60  # 1 week
+def get_solitude_modifier():
+    last_activity = config.STATE.get("last_activity", time.time())
+    elapsed = time.time() - last_activity
+
+    normalized = min(elapsed / SOLITUDE_PEAK, 1.0)
+
+    modifier = 1.0 + normalized
+    return modifier

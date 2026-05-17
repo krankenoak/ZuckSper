@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv
+import time
 import logging
+
 import mood
 
 # CONFIG
@@ -16,6 +18,7 @@ STATE = {
     "active": True,
     "mood": mood.Mood(),
     "users": {},
+    "last_activity": time.time(),
 }
 
 # LOGGING

@@ -6,6 +6,7 @@ import vc_events
 import users
 
 import astrology
+import mood
 
 # RANDOM EVENTS
 RANDOM_EVENTS = [
@@ -14,6 +15,12 @@ RANDOM_EVENTS = [
         "type": "message",
         "base_chance": 0.05,
         "func": text_events.event_random_gif,
+    },
+    {
+        "name": "random_reaction",
+        "type": "message",
+        "base_chance": 0.055,
+        "func": text_events.event_random_reaction,
     },
     {
         "name": "pipe",
@@ -30,7 +37,7 @@ TRIGGER_EVENTS = {
         "func": text_events.scary_zuck
     },
     "thanos_replace": {
-        "base_chance": 0.04,
+        "base_chance": 0.055,
         "func": text_events.thanos_replace
     },
 }
@@ -66,7 +73,7 @@ def apply_astrology_modifier(ctx, chance):
     horoscope = astrology.get_sign_horoscope(sign)
 
     chance *= (1 + horoscope["modifier"])
-    config.logging.info(f"Applying astrological modifiers {horoscope['modifier']} ")
+    config.logging.info(f"Applying astrological modifiers {horoscope['modifier']:.4f} ")
 
     return chance
 
@@ -76,6 +83,10 @@ async def compute_chance(event, ctx=None):
     chance = apply_global_modifiers(chance)
     chance = apply_context_modifiers(ctx, chance)
     chance = apply_astrology_modifier(ctx, chance)
+
+    solitude_modifier = mood.get_solitude_modifier()
+    config.logging.info(f"Applying solitude modifier: {solitude_modifier:.4f}")
+    chance *= solitude_modifier
 
     if chance < 0.0:
         return 0.0
@@ -110,6 +121,7 @@ async def process_random_events(ctx):
 
         try:
             await event["func"](ctx)
+            await mood.update_last_activity()
         except Exception as e:
             config.logging.exception(
                 f"Random event failed: "
@@ -138,6 +150,7 @@ async def trigger_event(name, ctx=None):
 
     try:
         await event["func"](ctx)
+        await update_last_activity()
     except Exception as e:
         config.logging.exception(
             f"Trigger event failed: "

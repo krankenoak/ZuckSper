@@ -95,7 +95,8 @@ async def info(ctx):
         f"Mood: "
         f"{mood_obj.get()} "
         f"{mood_obj.get_emoji()}"
-        f""
+        f"\n"
+        f"Solitude: {mood.get_solitude_modifier() - 1:.4f}"
     )
 
     lines.append(f"\nRANDOM EVENTS")
@@ -127,7 +128,7 @@ async def my_sign(ctx):
     sign = astrology.get_user_sign(member.created_at)
     horoscope = astrology.get_sign_horoscope(sign)
 
-    await ctx.send(f"🌌 **Your zodiac sign:** {sign}\n")
+    await ctx.send(f"🌌 **Twój znak zodiaku:** {sign}\n")
 
 @bot.command()
 async def my_horoscope(ctx):
@@ -140,7 +141,6 @@ async def my_horoscope(ctx):
         f"🔮 Horoscope for **{member.display_name}**\n"
         f"🌌 Sign: **{sign}**\n\n"
         f"{horoscope['message']}\n"
-        f"Cosmic modifier: `{horoscope['modifier']:.4f}`"
     )
 
 @bot.command()
