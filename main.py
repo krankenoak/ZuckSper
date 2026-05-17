@@ -85,6 +85,14 @@ async def on_message(msg):
     await events.process_random_events(ctx)
     await bot.process_commands(msg)
 
+    content = msg.content.lower() # Małe litery
+    if "zuck" in content:
+        if random.random() < 0.05:
+            await msg.channel.send(
+                content=f"{msg.author.mention} co mnie obgadujesz??", 
+                file=discord.File(get_random_media_file())
+            )
+
 # COMMANDS
 @bot.command()
 async def info(ctx):
